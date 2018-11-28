@@ -157,7 +157,7 @@ namespace ThreeDToolkit.Primitives
                 rad = 2 * Math.PI * i / Stacks;
                 rad_next = 2 * Math.PI * (i + 1) / Stacks;
 
-                GeneratePositon(rad, radius, height, out bp, out tp);
+                GeneratePosition(rad, radius, height, out bp, out tp);
                 mesh.Positions.Add(bp);
                 mesh.Positions.Add(tp);
 
@@ -176,7 +176,7 @@ namespace ThreeDToolkit.Primitives
 
                     if (!isSharePoint)
                     {
-                        GeneratePositon(rad_next, radius, height, out bp_next, out tp_next);
+                        GeneratePosition(rad_next, radius, height, out bp_next, out tp_next);
                         mesh.Positions.Add(bp_next);
                         mesh.Positions.Add(tp_next);
 
@@ -245,7 +245,7 @@ namespace ThreeDToolkit.Primitives
             return mesh;
         }
 
-        private void GeneratePositon(double rad, double radius, double height, out Point3D bp, out Point3D tp)
+        private void GeneratePosition(double rad, double radius, double height, out Point3D bp, out Point3D tp)
         {
             bp = new Point3D(radius * Math.Cos(rad), 0, radius * (-Math.Sin(rad)));
             tp = new Point3D(bp.X, height, bp.Z);
