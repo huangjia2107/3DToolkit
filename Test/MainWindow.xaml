@@ -31,17 +31,24 @@
                         <!-- <DirectionalLight Color="White" Direction="0,0,-1"/> -->
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
-                <threeD:Cylinder Height="8" Radius="4" Origin="0,0,0">
+                <threeD:Cylinder Height="8" Radius="4" Origin="0,0,0" SideTextureMargin="5,1">
                     <threeD:Cylinder.Transform>
                         <TranslateTransform3D OffsetY="-5"/>
                     </threeD:Cylinder.Transform>
                     <threeD:Cylinder.SideMaterial>
-                        <DiffuseMaterial>
-                            <DiffuseMaterial.Brush>
+                        <DiffuseMaterial Brush="LightGray">
+                            <!--<DiffuseMaterial.Brush>
                                 <ImageBrush ImageSource="Assets/Test.jpg" Opacity="1.000000" />
-                            </DiffuseMaterial.Brush>
+                            </DiffuseMaterial.Brush>-->
                         </DiffuseMaterial>
                     </threeD:Cylinder.SideMaterial>
+                    <threeD:Cylinder.SideTextureMaterial>
+                        <DiffuseMaterial>
+                            <DiffuseMaterial.Brush>
+                                <ImageBrush ImageSource="Assets/Test1.jpg" Opacity="1.000000" />
+                            </DiffuseMaterial.Brush>
+                        </DiffuseMaterial>
+                    </threeD:Cylinder.SideTextureMaterial>
 					<threeD:Cylinder.TopMaterial>
                         <DiffuseMaterial>
                             <DiffuseMaterial.Brush>
@@ -56,6 +63,7 @@
                             </DiffuseMaterial.Brush>
                         </DiffuseMaterial>
                     </threeD:Cylinder.BottomMaterial>
+                    
                 </threeD:Cylinder>
             </Viewport3D.Children>
         </Viewport3D>

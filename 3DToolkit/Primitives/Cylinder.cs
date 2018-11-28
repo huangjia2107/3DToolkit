@@ -18,7 +18,7 @@ namespace ThreeDToolkit.Primitives
         private GeometryModel3D _sideGeometryModel3D = null;
         private GeometryModel3D _topGeometryModel3D = null;
         private GeometryModel3D _bottomGeometryModel3D = null;
-        
+
         private GeometryModel3D _textureGeometryModel3D = null;
 
         #region Dependency Property
@@ -84,11 +84,11 @@ namespace ThreeDToolkit.Primitives
         static void OnSideTextureMarginPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var ctrl = d as Cylinder;
-            //ctrl.UpdateMaterial(ctrl._sideGeometryModel3D, (Material)e.NewValue);
+            ctrl.ConstructModel3DGroup();
         }
-        
+
         public static readonly DependencyProperty SideTextureMaterialProperty =
-            DependencyProperty.Register("SideTextureMaterial", typeof(Material), typeof(Cylinder), new PropertyMetadata(new DiffuseMaterial(Brushes.LightGray), OnSideTextureMaterialPropertyChanged));
+            DependencyProperty.Register("SideTextureMaterial", typeof(Material), typeof(Cylinder), new PropertyMetadata(null, OnSideTextureMaterialPropertyChanged));
         public Material SideTextureMaterial
         {
             get { return (Material)GetValue(SideTextureMaterialProperty); }
@@ -98,7 +98,7 @@ namespace ThreeDToolkit.Primitives
         static void OnSideTextureMaterialPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var ctrl = d as Cylinder;
-            ctrl.UpdateMaterial(ctrl._sideGeometryModel3D, (Material)e.NewValue);
+            ctrl.UpdateMaterial(ctrl._textureGeometryModel3D, (Material)e.NewValue);
         }
 
         public static readonly DependencyProperty SideMaterialProperty =
@@ -157,9 +157,10 @@ namespace ThreeDToolkit.Primitives
                 return;
 
             var modelGroup = new Model3DGroup();
+            var perimeter = 2 * Math.PI * Radius;
 
             //side
-            var cylinderSideMesh = GenerateCylinderSideMesh(Origin, Radius, Height, IsSharePoint);
+            var cylinderSideMesh = GenerateCylinderSideMesh(Origin, Radius, Height, new Rect(new Size(perimeter, Height)), IsSharePoint);
             _sideGeometryModel3D = new GeometryModel3D
             {
                 Geometry = cylinderSideMesh,
@@ -181,21 +182,32 @@ namespace ThreeDToolkit.Primitives
             };
 
             //Texture
-            _textureGeometryModel3D = new GeometryModel3D
+            if (SideTextureMaterial != null)
             {
-            
-            };
-             
+                _textureGeometryModel3D = new GeometryModel3D
+                {
+                    Geometry = GenerateCylinderSideMesh(
+                        Origin, Radius + 0.05, Height,
+                        new Rect(SideTextureMargin.Left, SideTextureMargin.Top, perimeter - SideTextureMargin.Left - SideTextureMargin.Right, Height - SideTextureMargin.Top - SideTextureMargin.Bottom),
+                        IsSharePoint),
+                    Material = SideTextureMaterial,
+                    BackMaterial = new DiffuseMaterial(Brushes.Gray)
+                };
+            }
+
             modelGroup.Children.Add(_sideGeometryModel3D);
             modelGroup.Children.Add(_topGeometryModel3D);
             modelGroup.Children.Add(_bottomGeometryModel3D);
-            modelGroup.Children.Add(_bottomGeometryModel3D);
+
+            if (_textureGeometryModel3D != null)
+                modelGroup.Children.Add(_textureGeometryModel3D);
 
             this.Content = modelGroup;
         }
 
         //Relative Start Point3D : 0,0,Z --> 0,Y,Z
-        private MeshGeometry3D GenerateCylinderSideMesh(Point3D origin, double radius, double height, bool isSharePoint = false)
+        /*
+        private MeshGeometry3D GenerateCylinderSideMesh11(Point3D origin, double radius, double height, bool isSharePoint = false)
         {
             var mesh = new MeshGeometry3D();
 
@@ -228,6 +240,57 @@ namespace ThreeDToolkit.Primitives
                     if (!isSharePoint)
                     {
                         GeneratePosition(rad_next, origin, radius, height, out bp_next, out tp_next);
+                        mesh.Positions.Add(bp_next);
+                        mesh.Positions.Add(tp_next);
+
+                        mesh.TextureCoordinates.Add(new Point((double)(i + 1) / Stacks, 1));
+                        mesh.TextureCoordinates.Add(new Point((double)(i + 1) / Stacks, 0));
+
+                        if (i == Stacks - 1)
+                            break;
+                    }
+                }
+            }
+
+            return mesh;
+        }
+                                                                                   */
+        private MeshGeometry3D GenerateCylinderSideMesh(Point3D origin, double radius, double height, Rect rect, bool isSharePoint = false)
+        {
+            var mesh = new MeshGeometry3D();
+
+            double rad, rad_next;
+            Point3D bp, tp, bp_next, tp_next;
+            var indexBase = isSharePoint ? 2 : 4;
+
+            for (int i = 0; i <= Stacks; i++)
+            {
+                rad = rect.X / radius + rect.Width * i / Stacks / radius;
+                rad_next = rect.X / radius + rect.Width * (i + 1) / Stacks / radius;
+
+                //rad = 2 * Math.PI * i / Stacks;
+                //rad_next = 2 * Math.PI * (i + 1) / Stacks;
+
+                GeneratePosition(rad, origin, radius, height, rect, out bp, out tp);
+                mesh.Positions.Add(bp);
+                mesh.Positions.Add(tp);
+
+                mesh.TextureCoordinates.Add(new Point((double)i / Stacks, 1));
+                mesh.TextureCoordinates.Add(new Point((double)i / Stacks, 0));
+
+                if (i < Stacks)
+                {
+                    mesh.TriangleIndices.Add(i * indexBase);
+                    mesh.TriangleIndices.Add(i * indexBase + 2);
+                    mesh.TriangleIndices.Add(i * indexBase + 1);
+
+                    mesh.TriangleIndices.Add(i * indexBase + 1);
+                    mesh.TriangleIndices.Add(i * indexBase + 2);
+                    mesh.TriangleIndices.Add(i * indexBase + 3);
+
+                    if (!isSharePoint)
+                    {
+                        GeneratePosition(rad_next, origin, radius, height, rect, out bp_next, out tp_next);
                         mesh.Positions.Add(bp_next);
                         mesh.Positions.Add(tp_next);
 
@@ -304,10 +367,10 @@ namespace ThreeDToolkit.Primitives
             return mesh;
         }
 
-        private void GeneratePosition(double rad, Point3D origin, double radius, double height, out Point3D bp, out Point3D tp)
+        private void GeneratePosition(double rad, Point3D origin, double radius, double height, Rect rect, out Point3D bp, out Point3D tp)
         {
-            bp = new Point3D(radius * (-Math.Sin(rad)) + origin.X, origin.Y, radius *(-Math.Cos(rad)) + origin.Z);
-            tp = new Point3D(bp.X, bp.Y + height, bp.Z);
+            bp = new Point3D(radius * (-Math.Sin(rad)) + origin.X, height - rect.Y - rect.Height + origin.Y, radius * (-Math.Cos(rad)) + origin.Z);
+            tp = new Point3D(bp.X, bp.Y + rect.Height, bp.Z);
         }
     }
 }
