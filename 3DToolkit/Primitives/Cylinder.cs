@@ -18,6 +18,8 @@ namespace ThreeDToolkit.Primitives
         private GeometryModel3D _sideGeometryModel3D = null;
         private GeometryModel3D _topGeometryModel3D = null;
         private GeometryModel3D _bottomGeometryModel3D = null;
+        
+        private GeometryModel3D _textureGeometryModel3D = null;
 
         #region Dependency Property
 
@@ -69,6 +71,34 @@ namespace ThreeDToolkit.Primitives
         {
             var d = (double)value;
             return !(double.IsNaN(d) || double.IsInfinity(d));
+        }
+
+        public static readonly DependencyProperty SideTextureMarginProperty =
+            DependencyProperty.Register("SideTextureMargin", typeof(Thickness), typeof(Cylinder), new PropertyMetadata(default(Thickness), OnSideTextureMarginPropertyChanged));
+        public Thickness SideTextureMargin
+        {
+            get { return (Thickness)GetValue(SideTextureMarginProperty); }
+            set { SetValue(SideTextureMarginProperty, value); }
+        }
+
+        static void OnSideTextureMarginPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var ctrl = d as Cylinder;
+            //ctrl.UpdateMaterial(ctrl._sideGeometryModel3D, (Material)e.NewValue);
+        }
+        
+        public static readonly DependencyProperty SideTextureMaterialProperty =
+            DependencyProperty.Register("SideTextureMaterial", typeof(Material), typeof(Cylinder), new PropertyMetadata(new DiffuseMaterial(Brushes.LightGray), OnSideTextureMaterialPropertyChanged));
+        public Material SideTextureMaterial
+        {
+            get { return (Material)GetValue(SideTextureMaterialProperty); }
+            set { SetValue(SideTextureMaterialProperty, value); }
+        }
+
+        static void OnSideTextureMaterialPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var ctrl = d as Cylinder;
+            ctrl.UpdateMaterial(ctrl._sideGeometryModel3D, (Material)e.NewValue);
         }
 
         public static readonly DependencyProperty SideMaterialProperty =
@@ -150,8 +180,15 @@ namespace ThreeDToolkit.Primitives
                 Material = BottomMaterial
             };
 
+            //Texture
+            _textureGeometryModel3D = new GeometryModel3D
+            {
+            
+            };
+             
             modelGroup.Children.Add(_sideGeometryModel3D);
             modelGroup.Children.Add(_topGeometryModel3D);
+            modelGroup.Children.Add(_bottomGeometryModel3D);
             modelGroup.Children.Add(_bottomGeometryModel3D);
 
             this.Content = modelGroup;
