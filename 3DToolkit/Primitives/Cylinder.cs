@@ -15,6 +15,8 @@ namespace ThreeDToolkit.Primitives
         private const int Stacks = 20;
         private const bool IsSharePoint = true;
 
+        private Model3DGroup _modelGroup = null;
+
         private GeometryModel3D _sideGeometryModel3D = null;
         private GeometryModel3D _topGeometryModel3D = null;
         private GeometryModel3D _bottomGeometryModel3D = null;
@@ -31,7 +33,7 @@ namespace ThreeDToolkit.Primitives
         static void OnOriginPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var ctrl = d as Cylinder;
-            ctrl.ConstructModel3DGroup();
+            ctrl.UpdateGeometry();
         }
 
         public static readonly DependencyProperty HeightProperty =
@@ -44,7 +46,7 @@ namespace ThreeDToolkit.Primitives
         static void OnHeightPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var ctrl = d as Cylinder;
-            ctrl.ConstructModel3DGroup();
+            ctrl.UpdateGeometry();
         }
 
         public static readonly DependencyProperty RadiusProperty =
@@ -57,7 +59,7 @@ namespace ThreeDToolkit.Primitives
         static void OnRadiusPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var ctrl = d as Cylinder;
-            ctrl.ConstructModel3DGroup();
+            ctrl.UpdateGeometry();
         }
 
         private static object CoerceDistance(DependencyObject d, object value)
@@ -113,6 +115,21 @@ namespace ThreeDToolkit.Primitives
 
         #endregion
 
+        private void UpdateGeometry()
+        {
+            if(_modelGroup == null)
+                ConstructModel3DGroup();
+            else
+            {
+                var perimeter = 2 * Math.PI * Radius;
+                var sideMesh = GenerateCylinderSideMesh(Origin, Radius, Height, new Rect(new Size(perimeter, Height)), IsSharePoint); 
+
+                _sideGeometryModel3D.Geometry = sideMesh;
+                _topGeometryModel3D.Geometry = GenerateCylinderTopMesh(sideMesh.Positions.Where((p3D, i) => i % 2 != 0), Radius, new Point3D(Origin.X, Origin.Y + Height, Origin.Z), IsSharePoint);
+                _bottomGeometryModel3D.Geometry = GenerateCylinderBottomMesh(sideMesh.Positions.Where((p3D, i) => i % 2 == 0), Radius, Origin, IsSharePoint);
+            }
+        }
+
         private void UpdateMaterial(GeometryModel3D geometryModel3D, Material material)
         {
             if (geometryModel3D == null)
@@ -126,36 +143,37 @@ namespace ThreeDToolkit.Primitives
             if (DoubleUtil.LessThanOrClose(Radius, 0) || DoubleUtil.LessThanOrClose(Height, 0))
                 return;
 
-            var modelGroup = new Model3DGroup();
             var perimeter = 2 * Math.PI * Radius;
+            var sideMesh = GenerateCylinderSideMesh(Origin, Radius, Height, new Rect(new Size(perimeter, Height)), IsSharePoint); 
+
+            _modelGroup = new Model3DGroup();
 
             //side
-            var cylinderSideMesh = GenerateCylinderSideMesh(Origin, Radius, Height, new Rect(new Size(perimeter, Height)), IsSharePoint); 
             _sideGeometryModel3D = new GeometryModel3D
             {
-                Geometry = cylinderSideMesh,
+                Geometry = sideMesh,
                 Material = SideMaterial
             };
 
             //Top
             _topGeometryModel3D = new GeometryModel3D
             {
-                Geometry = GenerateCylinderTopMesh(cylinderSideMesh.Positions.Where((p3D, i) => i % 2 != 0), Radius, new Point3D(Origin.X, Origin.Y + Height, Origin.Z), IsSharePoint),
+                Geometry = GenerateCylinderTopMesh(sideMesh.Positions.Where((p3D, i) => i % 2 != 0), Radius, new Point3D(Origin.X, Origin.Y + Height, Origin.Z), IsSharePoint),
                 Material = TopMaterial
             };
 
             //Bottom
             _bottomGeometryModel3D = new GeometryModel3D
             {
-                Geometry = GenerateCylinderBottomMesh(cylinderSideMesh.Positions.Where((p3D, i) => i % 2 == 0), Radius, Origin, IsSharePoint),
+                Geometry = GenerateCylinderBottomMesh(sideMesh.Positions.Where((p3D, i) => i % 2 == 0), Radius, Origin, IsSharePoint),
                 Material = BottomMaterial
             }; 
 
-            modelGroup.Children.Add(_sideGeometryModel3D);
-            modelGroup.Children.Add(_topGeometryModel3D);
-            modelGroup.Children.Add(_bottomGeometryModel3D); 
+            _modelGroup.Children.Add(_sideGeometryModel3D);
+            _modelGroup.Children.Add(_topGeometryModel3D);
+            _modelGroup.Children.Add(_bottomGeometryModel3D); 
 
-            this.Content = modelGroup;
+            this.Content = _modelGroup;
         }
 
         //Relative Start Point3D : 0,0,Z --> 0,Y,Z                                                                      */
