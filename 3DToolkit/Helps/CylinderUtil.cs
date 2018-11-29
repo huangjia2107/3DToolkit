@@ -10,6 +10,7 @@ namespace ThreeDToolkit.Helps
 {
     public static class CylinderUtil
     {
+        //Relative Start Point3D : 0,0,Z --> 0,Y,Z     
         public static MeshGeometry3D GenerateCylinderSideMesh(Point3D origin, double topRadius, double bottomRadius, IsoscelesTrapezoid trapezoid, int stacks = 20, bool isSharePoint = false)
         {
             var mesh = new MeshGeometry3D();

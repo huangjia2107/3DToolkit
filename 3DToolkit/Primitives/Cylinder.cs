@@ -147,8 +147,8 @@ namespace ThreeDToolkit.Primitives
                 var sideMesh = GenerateSideMesh();
 
                 _sideGeometryModel3D.Geometry = sideMesh;
-                _topGeometryModel3D.Geometry = GenerateCylinderTopMesh(sideMesh.Positions.Where((p3D, i) => i % 2 != 0), TopRadius, new Point3D(Origin.X, Origin.Y + Height, Origin.Z), IsSharePoint);
-                _bottomGeometryModel3D.Geometry = GenerateCylinderBottomMesh(sideMesh.Positions.Where((p3D, i) => i % 2 == 0), BottomRadius, Origin, IsSharePoint);
+                _topGeometryModel3D.Geometry = GenerateTopMesh(sideMesh.Positions.Where((p3D, i) => i % 2 != 0), TopRadius, new Point3D(Origin.X, Origin.Y + Height, Origin.Z), IsSharePoint);
+                _bottomGeometryModel3D.Geometry = GenerateBottomMesh(sideMesh.Positions.Where((p3D, i) => i % 2 == 0), BottomRadius, Origin, IsSharePoint);
             }
         }
 
@@ -179,14 +179,14 @@ namespace ThreeDToolkit.Primitives
             //Top
             _topGeometryModel3D = new GeometryModel3D
             {
-                Geometry = GenerateCylinderTopMesh(sideMesh.Positions.Where((p3D, i) => i % 2 != 0), TopRadius, new Point3D(Origin.X, Origin.Y + Height, Origin.Z), IsSharePoint),
+                Geometry = GenerateTopMesh(sideMesh.Positions.Where((p3D, i) => i % 2 != 0), TopRadius, new Point3D(Origin.X, Origin.Y + Height, Origin.Z), IsSharePoint),
                 Material = TopMaterial
             };
 
             //Bottom
             _bottomGeometryModel3D = new GeometryModel3D
             {
-                Geometry = GenerateCylinderBottomMesh(sideMesh.Positions.Where((p3D, i) => i % 2 == 0), BottomRadius, Origin, IsSharePoint),
+                Geometry = GenerateBottomMesh(sideMesh.Positions.Where((p3D, i) => i % 2 == 0), BottomRadius, Origin, IsSharePoint),
                 Material = BottomMaterial
             };
 
@@ -195,61 +195,11 @@ namespace ThreeDToolkit.Primitives
             _modelGroup.Children.Add(_bottomGeometryModel3D);
 
             this.Content = _modelGroup;
-        }
+        }              
 
-        //Relative Start Point3D : 0,0,Z --> 0,Y,Z                                                                      */
-        private MeshGeometry3D GenerateCylinderSideMesh(Point3D origin, double radius, double height, Rect validSurface, bool isSharePoint = false)
+        private MeshGeometry3D GenerateTopMesh(IEnumerable<Point3D> positions, double radius, Point3D circleCenter, bool isSharePoint)
         {
-            var mesh = new MeshGeometry3D();
-
-            double rad, rad_next;
-            Point3D bp, tp, bp_next, tp_next;
-            var indexBase = isSharePoint ? 2 : 4;
-
-            for (int i = 0; i <= Stacks; i++)
-            {
-                rad = validSurface.X / radius + validSurface.Width * i / Stacks / radius;
-
-                GeneratePosition(rad, origin, radius, height, validSurface, out bp, out tp);
-                mesh.Positions.Add(bp);
-                mesh.Positions.Add(tp);
-
-                mesh.TextureCoordinates.Add(new Point((double)i / Stacks, 1));
-                mesh.TextureCoordinates.Add(new Point((double)i / Stacks, 0));
-
-                if (i < Stacks)
-                {
-                    mesh.TriangleIndices.Add(i * indexBase);
-                    mesh.TriangleIndices.Add(i * indexBase + 2);
-                    mesh.TriangleIndices.Add(i * indexBase + 1);
-
-                    mesh.TriangleIndices.Add(i * indexBase + 1);
-                    mesh.TriangleIndices.Add(i * indexBase + 2);
-                    mesh.TriangleIndices.Add(i * indexBase + 3);
-
-                    if (!isSharePoint)
-                    {
-                        rad_next = validSurface.X / radius + validSurface.Width * (i + 1) / Stacks / radius;
-
-                        GeneratePosition(rad_next, origin, radius, height, validSurface, out bp_next, out tp_next);
-                        mesh.Positions.Add(bp_next);
-                        mesh.Positions.Add(tp_next);
-
-                        mesh.TextureCoordinates.Add(new Point((double)(i + 1) / Stacks, 1));
-                        mesh.TextureCoordinates.Add(new Point((double)(i + 1) / Stacks, 0));
-
-                        if (i == Stacks - 1)
-                            break;
-                    }
-                }
-            }
-
-            return mesh;
-        }
-
-        private MeshGeometry3D GenerateCylinderTopMesh(IEnumerable<Point3D> positions, double radius, Point3D circleCenter, bool isSharePoint)
-        {
-            return GenerateCylinderBottomOrTopMesh(positions, radius, circleCenter, isSharePoint,
+            return GenerateBottomOrTopMesh(positions, radius, circleCenter, isSharePoint,
                     (mesh, i) =>
                     {
                         mesh.TriangleIndices.Add(i);
@@ -258,9 +208,9 @@ namespace ThreeDToolkit.Primitives
                     });
         }
 
-        private MeshGeometry3D GenerateCylinderBottomMesh(IEnumerable<Point3D> positions, double radius, Point3D circleCenter, bool isSharePoint)
+        private MeshGeometry3D GenerateBottomMesh(IEnumerable<Point3D> positions, double radius, Point3D circleCenter, bool isSharePoint)
         {
-            return GenerateCylinderBottomOrTopMesh(positions, radius, circleCenter, isSharePoint,
+            return GenerateBottomOrTopMesh(positions, radius, circleCenter, isSharePoint,
                     (mesh, i) =>
                     {
                         mesh.TriangleIndices.Add(i);
@@ -269,7 +219,7 @@ namespace ThreeDToolkit.Primitives
                     });
         }
 
-        private MeshGeometry3D GenerateCylinderBottomOrTopMesh(IEnumerable<Point3D> positions, double radius, Point3D circleCenter, bool isSharePoint, Action<MeshGeometry3D, int> drawTriangleAction)
+        private MeshGeometry3D GenerateBottomOrTopMesh(IEnumerable<Point3D> positions, double radius, Point3D circleCenter, bool isSharePoint, Action<MeshGeometry3D, int> drawTriangleAction)
         {
             var mesh = new MeshGeometry3D
             {
@@ -306,12 +256,6 @@ namespace ThreeDToolkit.Primitives
             }
 
             return mesh;
-        }
-
-        private void GeneratePosition(double rad, Point3D origin, double radius, double height, Rect validSurface, out Point3D bp, out Point3D tp)
-        {
-            bp = new Point3D(radius * (-Math.Sin(rad)) + origin.X, height - validSurface.Y - validSurface.Height + origin.Y, radius * (-Math.Cos(rad)) + origin.Z);
-            tp = new Point3D(bp.X, bp.Y + validSurface.Height, bp.Z);
-        }
+        }        
     }
 }
