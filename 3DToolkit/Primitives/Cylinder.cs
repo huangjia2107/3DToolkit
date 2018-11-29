@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Media.Media3D;
 using ThreeDToolkit.Helps;
 using System.Windows.Media;
+using ThreeDToolkit.Models;
 
 namespace ThreeDToolkit.Primitives
 {
@@ -49,14 +50,27 @@ namespace ThreeDToolkit.Primitives
             ctrl.UpdateGeometry();
         }
 
-        public static readonly DependencyProperty RadiusProperty =
-            DependencyProperty.Register("Radius", typeof(double), typeof(Cylinder), new PropertyMetadata(4d, OnRadiusPropertyChanged, CoerceDistance), IsValidDoubleValue);
-        public double Radius
+        public static readonly DependencyProperty TopRadiusProperty =
+           DependencyProperty.Register("TopRadius", typeof(double), typeof(Cylinder), new PropertyMetadata(4d, OnTopRadiusPropertyChanged, CoerceDistance), IsValidDoubleValue);
+        public double TopRadius
         {
-            get { return (double)GetValue(RadiusProperty); }
-            set { SetValue(RadiusProperty, value); }
+            get { return (double)GetValue(TopRadiusProperty); }
+            set { SetValue(TopRadiusProperty, value); }
         }
-        static void OnRadiusPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        static void OnTopRadiusPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var ctrl = d as Cylinder;
+            ctrl.UpdateGeometry();
+        }
+
+        public static readonly DependencyProperty BottomRadiusProperty =
+            DependencyProperty.Register("BottomRadius", typeof(double), typeof(Cylinder), new PropertyMetadata(4d, OnBottomRadiusPropertyChanged, CoerceDistance), IsValidDoubleValue);
+        public double BottomRadius
+        {
+            get { return (double)GetValue(BottomRadiusProperty); }
+            set { SetValue(BottomRadiusProperty, value); }
+        }
+        static void OnBottomRadiusPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var ctrl = d as Cylinder;
             ctrl.UpdateGeometry();
@@ -115,18 +129,26 @@ namespace ThreeDToolkit.Primitives
 
         #endregion
 
+        private MeshGeometry3D GenerateSideMesh()
+        {
+            var topPerimeter = 2 * Math.PI * TopRadius;
+            var bottomPerimeter = 2 * Math.PI * BottomRadius;
+
+            return CylinderUtil.GenerateCylinderSideMesh(Origin, TopRadius, BottomRadius,
+                new IsoscelesTrapezoid { TopWidth = topPerimeter, BottomWidth = bottomPerimeter, Height = Height });
+        }
+
         private void UpdateGeometry()
         {
-            if(_modelGroup == null)
+            if (_modelGroup == null)
                 ConstructModel3DGroup();
             else
             {
-                var perimeter = 2 * Math.PI * Radius;
-                var sideMesh = GenerateCylinderSideMesh(Origin, Radius, Height, new Rect(new Size(perimeter, Height)), IsSharePoint); 
+                var sideMesh = GenerateSideMesh();
 
                 _sideGeometryModel3D.Geometry = sideMesh;
-                _topGeometryModel3D.Geometry = GenerateCylinderTopMesh(sideMesh.Positions.Where((p3D, i) => i % 2 != 0), Radius, new Point3D(Origin.X, Origin.Y + Height, Origin.Z), IsSharePoint);
-                _bottomGeometryModel3D.Geometry = GenerateCylinderBottomMesh(sideMesh.Positions.Where((p3D, i) => i % 2 == 0), Radius, Origin, IsSharePoint);
+                _topGeometryModel3D.Geometry = GenerateCylinderTopMesh(sideMesh.Positions.Where((p3D, i) => i % 2 != 0), TopRadius, new Point3D(Origin.X, Origin.Y + Height, Origin.Z), IsSharePoint);
+                _bottomGeometryModel3D.Geometry = GenerateCylinderBottomMesh(sideMesh.Positions.Where((p3D, i) => i % 2 == 0), BottomRadius, Origin, IsSharePoint);
             }
         }
 
@@ -140,11 +162,10 @@ namespace ThreeDToolkit.Primitives
 
         private void ConstructModel3DGroup()
         {
-            if (DoubleUtil.LessThanOrClose(Radius, 0) || DoubleUtil.LessThanOrClose(Height, 0))
+            if (DoubleUtil.LessThanOrClose(TopRadius, 0) || DoubleUtil.LessThanOrClose(BottomRadius, 0) || DoubleUtil.LessThanOrClose(Height, 0))
                 return;
 
-            var perimeter = 2 * Math.PI * Radius;
-            var sideMesh = GenerateCylinderSideMesh(Origin, Radius, Height, new Rect(new Size(perimeter, Height)), IsSharePoint); 
+            var sideMesh = GenerateSideMesh();
 
             _modelGroup = new Model3DGroup();
 
@@ -158,20 +179,20 @@ namespace ThreeDToolkit.Primitives
             //Top
             _topGeometryModel3D = new GeometryModel3D
             {
-                Geometry = GenerateCylinderTopMesh(sideMesh.Positions.Where((p3D, i) => i % 2 != 0), Radius, new Point3D(Origin.X, Origin.Y + Height, Origin.Z), IsSharePoint),
+                Geometry = GenerateCylinderTopMesh(sideMesh.Positions.Where((p3D, i) => i % 2 != 0), TopRadius, new Point3D(Origin.X, Origin.Y + Height, Origin.Z), IsSharePoint),
                 Material = TopMaterial
             };
 
             //Bottom
             _bottomGeometryModel3D = new GeometryModel3D
             {
-                Geometry = GenerateCylinderBottomMesh(sideMesh.Positions.Where((p3D, i) => i % 2 == 0), Radius, Origin, IsSharePoint),
+                Geometry = GenerateCylinderBottomMesh(sideMesh.Positions.Where((p3D, i) => i % 2 == 0), BottomRadius, Origin, IsSharePoint),
                 Material = BottomMaterial
-            }; 
+            };
 
             _modelGroup.Children.Add(_sideGeometryModel3D);
             _modelGroup.Children.Add(_topGeometryModel3D);
-            _modelGroup.Children.Add(_bottomGeometryModel3D); 
+            _modelGroup.Children.Add(_bottomGeometryModel3D);
 
             this.Content = _modelGroup;
         }
@@ -187,7 +208,7 @@ namespace ThreeDToolkit.Primitives
 
             for (int i = 0; i <= Stacks; i++)
             {
-                rad = validSurface.X / radius + validSurface.Width * i / Stacks / radius; 
+                rad = validSurface.X / radius + validSurface.Width * i / Stacks / radius;
 
                 GeneratePosition(rad, origin, radius, height, validSurface, out bp, out tp);
                 mesh.Positions.Add(bp);
@@ -208,7 +229,7 @@ namespace ThreeDToolkit.Primitives
 
                     if (!isSharePoint)
                     {
-                        rad_next = validSurface.X / radius + validSurface.Width * (i + 1) / Stacks / radius; 
+                        rad_next = validSurface.X / radius + validSurface.Width * (i + 1) / Stacks / radius;
 
                         GeneratePosition(rad_next, origin, radius, height, validSurface, out bp_next, out tp_next);
                         mesh.Positions.Add(bp_next);

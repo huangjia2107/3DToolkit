@@ -4,24 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media.Media3D;
 using System.Windows;
+using ThreeDToolkit.Models;
 
 namespace ThreeDToolkit.Helps
 {
     public static class CylinderUtil
     {
-        private static MeshGeometry3D GenerateCylinderSideMesh(Point3D origin, double height, double topRadius, double bottomRadius, Rect range, int stacks = 20, bool isSharePoint = false)
+        public static MeshGeometry3D GenerateCylinderSideMesh(Point3D origin, double topRadius, double bottomRadius, IsoscelesTrapezoid trapezoid, int stacks = 20, bool isSharePoint = false)
         {
             var mesh = new MeshGeometry3D();
 
-            double rad, rad_next;
             Point3D bp, tp, bp_next, tp_next;
             var indexBase = isSharePoint ? 2 : 4;
 
             for (int i = 0; i <= stacks; i++)
             {
-                rad = range.X / bottomRadius + range.Width * i / stacks / bottomRadius;
+                bp = GetPosition(
+                        GetRadian(bottomRadius, trapezoid.BottomWidth, i, stacks),
+                        origin, bottomRadius, 0);
 
-                GeneratePosition(rad, origin, bottomRadius, height, range, out bp, out tp);
+                tp = GetPosition(
+                        GetRadian(topRadius, trapezoid.TopWidth, i, stacks),
+                        origin, topRadius, trapezoid.Height);
+
                 mesh.Positions.Add(bp);
                 mesh.Positions.Add(tp);
 
@@ -40,9 +45,14 @@ namespace ThreeDToolkit.Helps
 
                     if (!isSharePoint)
                     {
-                        rad_next = range.X / bottomRadius + range.Width * (i + 1) / stacks / bottomRadius;
+                        bp_next = GetPosition(
+                            GetRadian(bottomRadius, trapezoid.BottomWidth, i + 1, stacks),
+                            origin, bottomRadius, 0);
 
-                        GeneratePosition(rad_next, origin, bottomRadius, height, range, out bp_next, out tp_next);
+                        tp_next = GetPosition(
+                            GetRadian(topRadius, trapezoid.TopWidth, i + 1, stacks),
+                            origin, topRadius, trapezoid.Height);
+
                         mesh.Positions.Add(bp_next);
                         mesh.Positions.Add(tp_next);
 
@@ -58,10 +68,16 @@ namespace ThreeDToolkit.Helps
             return mesh;
         }
 
-        public static void GeneratePosition(double rad, Point3D origin, double radius, double height, Rect range, out Point3D bp, out Point3D tp)
+        private static double GetRadian(double radius, double arcLength, int index, int stacks)
         {
-            bp = new Point3D(radius * (-Math.Sin(rad)) + origin.X, height - range.Y - range.Height + origin.Y, radius * (-Math.Cos(rad)) + origin.Z);
-            tp = new Point3D(bp.X, bp.Y + range.Height, bp.Z);
+            return Math.Min(2 * Math.PI * radius, arcLength) * index / stacks / radius;
         }
+
+        private static Point3D GetPosition(double rad, Point3D origin, double radius, double y)
+        {
+            return new Point3D(radius * (-Math.Sin(rad)) + origin.X, y + origin.Y, radius * (-Math.Cos(rad)) + origin.Z);
+        }
+
     }
+
 }

@@ -25,12 +25,12 @@
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <Model3DGroup>
-                            <AmbientLight Color="#55FFFFFF"/> 
+                            <AmbientLight Color="#55FFFFFF"/>
                         </Model3DGroup>
                         <!-- <DirectionalLight Color="White" Direction="0,0,-1"/> -->
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
-                <threeD:Cylinder Height="8" Radius="4" Origin="0,0,0">
+                <threeD:Cylinder Height="8" TopRadius="6" BottomRadius="4" Origin="0,0,0">
                     <threeD:Cylinder.Transform>
                         <TranslateTransform3D OffsetY="-5"/>
                     </threeD:Cylinder.Transform>
@@ -42,13 +42,14 @@
                                 </DiffuseMaterial.Brush>
                             </DiffuseMaterial>
                             <DiffuseMaterial>
-                                <DiffuseMaterial.Brush><!--Viewport="0.3 0.125 0.38 0.75"  Viewport="7.75 1 9.6 6"-->
+                                <DiffuseMaterial.Brush>
+                                    <!--Viewport="0.3 0.125 0.38 0.75"  Viewport="7.75 1 9.6 6"-->
                                     <ImageBrush ImageSource="Assets/Test1.jpg" Opacity="1.000000" Viewport="0.3 0.125 0.38 0.75"/>
                                 </DiffuseMaterial.Brush>
-                           </DiffuseMaterial>
-                        </MaterialGroup> 
-                    </threeD:Cylinder.SideMaterial> 
-					<threeD:Cylinder.TopMaterial>
+                            </DiffuseMaterial>
+                        </MaterialGroup>
+                    </threeD:Cylinder.SideMaterial>
+                    <threeD:Cylinder.TopMaterial>
                         <DiffuseMaterial>
                             <DiffuseMaterial.Brush>
                                 <ImageBrush ImageSource="Assets/Koala.jpg" Opacity="1.000000" />
@@ -62,7 +63,7 @@
                             </DiffuseMaterial.Brush>
                         </DiffuseMaterial>
                     </threeD:Cylinder.BottomMaterial>
-                    
+
                 </threeD:Cylinder>
             </Viewport3D.Children>
         </Viewport3D>
