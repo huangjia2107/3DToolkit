@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Helps\CylinderUtil.cs" />
     <Compile Include="Helps\DoubleUtil.cs" />
+    <Compile Include="Models\IsoscelesTrapezoid.cs" />
     <Compile Include="Primitives\Cone.cs" />
     <Compile Include="Primitives\Cube.cs" />
     <Compile Include="Primitives\Cylinder.cs" />

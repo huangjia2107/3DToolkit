@@ -129,15 +129,6 @@ namespace ThreeDToolkit.Primitives
 
         #endregion
 
-        private MeshGeometry3D GenerateSideMesh()
-        {
-            var topPerimeter = 2 * Math.PI * TopRadius;
-            var bottomPerimeter = 2 * Math.PI * BottomRadius;
-
-            return CylinderUtil.GenerateCylinderSideMesh(Origin, TopRadius, BottomRadius,
-                new IsoscelesTrapezoid { TopWidth = topPerimeter, BottomWidth = bottomPerimeter, Height = Height });
-        }
-
         private void UpdateGeometry()
         {
             if (_modelGroup == null)
@@ -167,8 +158,6 @@ namespace ThreeDToolkit.Primitives
 
             var sideMesh = GenerateSideMesh();
 
-            _modelGroup = new Model3DGroup();
-
             //side
             _sideGeometryModel3D = new GeometryModel3D
             {
@@ -190,16 +179,27 @@ namespace ThreeDToolkit.Primitives
                 Material = BottomMaterial
             };
 
+            //Model3DGroup
+            _modelGroup = new Model3DGroup();
             _modelGroup.Children.Add(_sideGeometryModel3D);
             _modelGroup.Children.Add(_topGeometryModel3D);
             _modelGroup.Children.Add(_bottomGeometryModel3D);
 
             this.Content = _modelGroup;
-        }              
+        }
+
+        private MeshGeometry3D GenerateSideMesh()
+        {
+            var topPerimeter = 2 * Math.PI * TopRadius;
+            var bottomPerimeter = 2 * Math.PI * BottomRadius;
+
+            return CylinderUtil.GenerateCylinderSideMesh(Origin, TopRadius, BottomRadius,
+                new IsoscelesTrapezoid { TopWidth = topPerimeter, BottomWidth = bottomPerimeter, Height = Height }, Stacks, IsSharePoint);
+        }
 
         private MeshGeometry3D GenerateTopMesh(IEnumerable<Point3D> positions, double radius, Point3D circleCenter, bool isSharePoint)
         {
-            return GenerateBottomOrTopMesh(positions, radius, circleCenter, isSharePoint,
+            return CylinderUtil.GenerateCircleMesh(positions, radius, circleCenter, isSharePoint,
                     (mesh, i) =>
                     {
                         mesh.TriangleIndices.Add(i);
@@ -210,7 +210,7 @@ namespace ThreeDToolkit.Primitives
 
         private MeshGeometry3D GenerateBottomMesh(IEnumerable<Point3D> positions, double radius, Point3D circleCenter, bool isSharePoint)
         {
-            return GenerateBottomOrTopMesh(positions, radius, circleCenter, isSharePoint,
+            return CylinderUtil.GenerateCircleMesh(positions, radius, circleCenter, isSharePoint,
                     (mesh, i) =>
                     {
                         mesh.TriangleIndices.Add(i);
@@ -218,44 +218,5 @@ namespace ThreeDToolkit.Primitives
                         mesh.TriangleIndices.Add(i + 1);
                     });
         }
-
-        private MeshGeometry3D GenerateBottomOrTopMesh(IEnumerable<Point3D> positions, double radius, Point3D circleCenter, bool isSharePoint, Action<MeshGeometry3D, int> drawTriangleAction)
-        {
-            var mesh = new MeshGeometry3D
-            {
-                Positions = new Point3DCollection(positions)
-            };
-
-            //center of a circle
-            mesh.Positions.Add(circleCenter);
-
-            for (int i = 0; i < mesh.Positions.Count; i++)
-            {
-                /*Texture : real 2D position maps to 0-1
-                  (0,0)         (1,0)
-                  @-------------@
-                  |             |
-                  |             |
-                  |             |
-                  @-------------@
-                  (0,1)         (1,1)
-                 */
-                var point3D = mesh.Positions[i];
-                mesh.TextureCoordinates.Add(new Point((point3D.X - circleCenter.X + radius) / (2 * radius), (point3D.Z - circleCenter.Z + radius) / (2 * radius)));
-
-                //Triangle
-                if (isSharePoint && i <= mesh.Positions.Count - 3)
-                {
-                    drawTriangleAction(mesh, i);
-                }
-
-                if (!isSharePoint && i <= mesh.Positions.Count - 2 && i % 2 == 0)
-                {
-                    drawTriangleAction(mesh, i);
-                }
-            }
-
-            return mesh;
-        }        
     }
 }

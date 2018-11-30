@@ -30,9 +30,63 @@
                         <!-- <DirectionalLight Color="White" Direction="0,0,-1"/> -->
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
-                <threeD:Cylinder Height="8" TopRadius="6" BottomRadius="4" Origin="0,0,0">
-                    <threeD:Cylinder.Transform>
+                
+                <threeD:Pyramid Height="8" Radius="4" Sides="8" Origin="0,0,0">
+                    <threeD:Pyramid.Transform>
                         <TranslateTransform3D OffsetY="-5"/>
+                    </threeD:Pyramid.Transform>
+                    <threeD:Pyramid.SideMaterials>
+                        <MaterialGroup>
+                            <DiffuseMaterial>
+                                <DiffuseMaterial.Brush>
+                                    <ImageBrush ImageSource="Assets/Test.jpg" Opacity="1.000000"/>
+                                </DiffuseMaterial.Brush>
+                            </DiffuseMaterial>
+                            <DiffuseMaterial>
+                                <DiffuseMaterial.Brush>
+                                    <ImageBrush ImageSource="Assets/Test1.jpg" Opacity="1.000000"/>
+                                </DiffuseMaterial.Brush>
+                            </DiffuseMaterial>
+                            <DiffuseMaterial>
+                                <DiffuseMaterial.Brush>
+                                    <ImageBrush ImageSource="Assets/Koala.jpg" Opacity="1.000000"/>
+                                </DiffuseMaterial.Brush>
+                            </DiffuseMaterial>
+                        </MaterialGroup>
+                    </threeD:Pyramid.SideMaterials>
+                    <threeD:Pyramid.BottomMaterial>
+                        <DiffuseMaterial>
+                            <DiffuseMaterial.Brush>
+                                <ImageBrush ImageSource="Assets/Test1.jpg" Opacity="1.000000" />
+                            </DiffuseMaterial.Brush>
+                        </DiffuseMaterial>
+                    </threeD:Pyramid.BottomMaterial>
+                </threeD:Pyramid>
+                
+                <!--
+                <threeD:Cone Height="8" Radius="4" Origin="0,0,0">
+                    <threeD:Cone.Transform>
+                        <TranslateTransform3D OffsetY="-5"/>
+                    </threeD:Cone.Transform>
+                    <threeD:Cone.SideMaterial>
+                        <DiffuseMaterial>
+                            <DiffuseMaterial.Brush>
+                                <ImageBrush ImageSource="Assets/Test.jpg" Opacity="1.000000"/>
+                            </DiffuseMaterial.Brush>
+                        </DiffuseMaterial>
+                    </threeD:Cone.SideMaterial>
+                    <threeD:Cone.BottomMaterial>
+                        <DiffuseMaterial>
+                            <DiffuseMaterial.Brush>
+                                <ImageBrush ImageSource="Assets/Test1.jpg" Opacity="1.000000" />
+                            </DiffuseMaterial.Brush>
+                        </DiffuseMaterial>
+                    </threeD:Cone.BottomMaterial>
+                </threeD:Cone>
+                
+                <threeD:Cylinder Height="8" TopRadius="4" BottomRadius="4" Origin="0,0,0">
+                    <threeD:Cylinder.Transform>
+                        <TranslateTransform3D OffsetY="-5" OffsetX="5"/>
                     </threeD:Cylinder.Transform>
                     <threeD:Cylinder.SideMaterial>
                         <MaterialGroup>
@@ -42,8 +96,7 @@
                                 </DiffuseMaterial.Brush>
                             </DiffuseMaterial>
                             <DiffuseMaterial>
-                                <DiffuseMaterial.Brush>
-                                    <!--Viewport="0.3 0.125 0.38 0.75"  Viewport="7.75 1 9.6 6"-->
+                                <DiffuseMaterial.Brush> 
                                     <ImageBrush ImageSource="Assets/Test1.jpg" Opacity="1.000000" Viewport="0.3 0.125 0.38 0.75"/>
                                 </DiffuseMaterial.Brush>
                             </DiffuseMaterial>
@@ -63,8 +116,8 @@
                             </DiffuseMaterial.Brush>
                         </DiffuseMaterial>
                     </threeD:Cylinder.BottomMaterial>
-
                 </threeD:Cylinder>
+                -->
             </Viewport3D.Children>
         </Viewport3D>
 

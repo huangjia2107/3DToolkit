@@ -10,8 +10,10 @@ namespace ThreeDToolkit.Helps
 {
     public static class CylinderUtil
     {
+        #region Public 
+
         //Relative Start Point3D : 0,0,Z --> 0,Y,Z     
-        public static MeshGeometry3D GenerateCylinderSideMesh(Point3D origin, double topRadius, double bottomRadius, IsoscelesTrapezoid trapezoid, int stacks = 20, bool isSharePoint = false)
+        public static MeshGeometry3D GenerateCylinderSideMesh(Point3D origin, double topRadius, double bottomRadius, IsoscelesTrapezoid trapezoid, int stacks = 20, bool isSharePoint = true)
         {
             var mesh = new MeshGeometry3D();
 
@@ -69,16 +71,56 @@ namespace ThreeDToolkit.Helps
             return mesh;
         }
 
-        private static double GetRadian(double radius, double arcLength, int index, int stacks)
+        public static MeshGeometry3D GenerateCircleMesh(IEnumerable<Point3D> perimetePoints, double radius, Point3D circleCenter, bool isSharePoint, Action<MeshGeometry3D, int> drawTriangleAction)
+        {
+            var mesh = new MeshGeometry3D
+            {
+                Positions = new Point3DCollection(perimetePoints)
+            };
+
+            //center of a circle
+            mesh.Positions.Add(circleCenter);
+
+            for (int i = 0; i < mesh.Positions.Count; i++)
+            {
+                /*Texture : real 2D position maps to 0-1
+                  (0,0)         (1,0)
+                  @-------------@
+                  |             |
+                  |             |
+                  |             |
+                  @-------------@
+                  (0,1)         (1,1)
+                 */
+                var point3D = mesh.Positions[i];
+                mesh.TextureCoordinates.Add(new Point((point3D.X - circleCenter.X + radius) / (2 * radius), (point3D.Z - circleCenter.Z + radius) / (2 * radius)));
+
+                //Triangle
+                if (isSharePoint && i <= mesh.Positions.Count - 3)
+                {
+                    drawTriangleAction(mesh, i);
+                }
+
+                if (!isSharePoint && i <= mesh.Positions.Count - 2 && i % 2 == 0)
+                {
+                    drawTriangleAction(mesh, i);
+                }
+            }
+
+            return mesh;
+        }
+
+        #endregion
+
+        public static double GetRadian(double radius, double arcLength, int index, int stacks)
         {
             return Math.Min(2 * Math.PI * radius, arcLength) * index / stacks / radius;
         }
 
-        private static Point3D GetPosition(double rad, Point3D origin, double radius, double y)
+        public static Point3D GetPosition(double rad, Point3D origin, double radius, double y)
         {
             return new Point3D(radius * (-Math.Sin(rad)) + origin.X, y + origin.Y, radius * (-Math.Cos(rad)) + origin.Z);
-        }
-
+        } 
     }
 
 }
