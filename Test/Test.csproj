@@ -97,7 +97,16 @@
     <Resource Include="Assets\Koala.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\111.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Assets\Check.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\222.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\333.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
