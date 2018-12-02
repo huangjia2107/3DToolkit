@@ -170,9 +170,9 @@ namespace ThreeDToolkit.Primitives
             var tp = new Point3D(origin.X, origin.Y + height, origin.Z);
             var indexBase = isSharePoint ? 2 : 4;
 
-            var width = GetWidthFromExpandedCone(radius, height);
-            var h1 = GetH1FromExpandedCone(radius, height, width);
-            var h2 = GetH2FromExpandedCone(radius, height, width);
+            var texturePointFunc = GenerateConeArcTexturePointFunc(
+                Math.Sqrt(Math.Pow(radius, 2) + Math.Pow(height, 2)),
+                2 * Math.PI * radius);
 
             for (int i = 0; i <= stacks; i++)
             {
@@ -183,7 +183,7 @@ namespace ThreeDToolkit.Primitives
                 mesh.Positions.Add(bp);
                 mesh.Positions.Add(tp);
 
-                mesh.TextureCoordinates.Add(GetTexturePoint(radius, height, i, stacks, h1, h2));
+                mesh.TextureCoordinates.Add(texturePointFunc(i, stacks));
                 mesh.TextureCoordinates.Add(new Point(0.5, 0));
 
                 if (i < stacks)
@@ -205,7 +205,7 @@ namespace ThreeDToolkit.Primitives
                         mesh.Positions.Add(bp_next);
                         mesh.Positions.Add(tp);
 
-                        mesh.TextureCoordinates.Add(GetTexturePoint(radius, height, i + 1, stacks, h1, h2));
+                        mesh.TextureCoordinates.Add(texturePointFunc(i, stacks));
                         mesh.TextureCoordinates.Add(new Point(0.5, 0));
 
                         if (i == stacks - 1)
@@ -217,58 +217,23 @@ namespace ThreeDToolkit.Primitives
             return mesh;
         }
 
-        /*       0     1     2     3     4             0     1     2     3     4     5
-         *   0   ._____._____._____._____.         0   ._____._____._____._____._____.
-         *   1   +_____|_____|_____|_____+         1   +_____|_____|_____|_____|_____+
-         *   2   +_____|_____|_____|_____+         2   +_____|_____|_____|_____|_____+
-         *   3   +___________|___________+         3   +___________|_____|___________+
-         *   4   +___________|___________+         4   +___________|_____|___________+
-         *                                         5   +_____________________________+
-         */
-        private Point GetTexturePoint(double radius, double height, int index, int stacks, double h1, double h2)
-        {
-            var x = (double)index / stacks;
-            var y = 0d;
+        //According to the expanded cone (Sector);
+        private Func<int, int, Point> GenerateConeArcTexturePointFunc(double sectorRadius, double sectorArcLength)
+        {                                                                         
+            var radian = sectorArcLength / sectorRadius;
+            var leftRadian = (2 * Math.PI - radian) / 2;
+            var w = DoubleUtil.GreaterThanOrClose(radian, Math.PI) ? sectorRadius : (sectorRadius * Math.Sin(leftRadian));
+            var h = DoubleUtil.LessThanOrClose(radian, Math.PI) ? sectorRadius : (sectorRadius * Math.Cos(leftRadian));
 
-            if (index <= stacks / 2)
+            return (index, stacks) =>
             {
-                y = (h1 + h2 / stacks * index * 2) / Math.Sqrt(Math.Pow(radius, 2) + Math.Pow(height, 2));
-            }
-            else
-            {
-                y = (h1 + h2 / stacks * (stacks - index) * 2) / Math.Sqrt(Math.Pow(radius, 2) + Math.Pow(height, 2));
-            }
+                var curRadian = leftRadian + radian * index / stacks;
 
-            return new Point(x, y);
-        }
+                var y = (DoubleUtil.LessThanOrClose(radian, Math.PI) ? 0 : h) - sectorRadius * Math.Cos(curRadian);
+                var x = w - sectorRadius * Math.Sin(curRadian);
 
-        //Width from the expanded cone;
-        /*
-         *           Width
-         *       |-----------|
-         *    ++++-----.-----+++                                                                   .++ 
-         *       |    /|\    |                                                                    /|
-         *       |   / | \   |                                                                   / |
-         *    H1 |  /  |  \  |  <--  Math.Sqrt(Math.Pow(radius, 2) + Math.Pow(height, 2))  -->  /  |  height
-         *       | /   |   \ |                                                                 /   |
-         *    ___|/    |    \|                                                                /    |
-         *    H2 |     |     |                                                               /_____|
-         *    ++++-----+-----+++                                                             +-----+++
-         *                                                                                   radius
-         */
-        private double GetWidthFromExpandedCone(double radius, double height)
-        {
-            return Math.PI * radius * Math.Sqrt(4 * (Math.Pow(radius, 2) + Math.Pow(height, 2)) - Math.Pow(Math.PI, 2) * Math.Pow(radius, 2)) / Math.Sqrt(Math.Pow(radius, 2) + Math.Pow(height, 2));
-        }
-
-        private double GetH1FromExpandedCone(double radius, double height, double width)
-        {
-            return Math.Sqrt(Math.Pow(radius, 2) + Math.Pow(height, 2) - Math.Pow(width, 2) / 4);
-        }
-
-        private double GetH2FromExpandedCone(double radius, double height, double width)
-        {
-            return Math.Sqrt(Math.Pow(Math.PI, 2) * Math.Pow(radius, 2) - Math.Pow(width, 2) / 4);
+                return new Point(x / (w * 2), y / (DoubleUtil.LessThanOrClose(radian, Math.PI) ? h : (h + sectorRadius)));
+            };
         }
     }
 }

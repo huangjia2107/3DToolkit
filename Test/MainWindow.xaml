@@ -30,7 +30,7 @@
                         <!-- <DirectionalLight Color="White" Direction="0,0,-1"/> -->
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
-                
+                <!--
                 <threeD:Pyramid Height="8" Radius="4" Sides="8" Origin="0,0,0">
                     <threeD:Pyramid.Transform>
                         <TranslateTransform3D OffsetY="-5"/>
@@ -62,8 +62,8 @@
                         </DiffuseMaterial>
                     </threeD:Pyramid.BottomMaterial>
                 </threeD:Pyramid>
-                
-                <!--
+                     
+
                 <threeD:Cone Height="8" Radius="4" Origin="0,0,0">
                     <threeD:Cone.Transform>
                         <TranslateTransform3D OffsetY="-5"/>
@@ -71,7 +71,7 @@
                     <threeD:Cone.SideMaterial>
                         <DiffuseMaterial>
                             <DiffuseMaterial.Brush>
-                                <ImageBrush ImageSource="Assets/Test.jpg" Opacity="1.000000"/>
+                                <ImageBrush ImageSource="Assets/Check.jpg" Opacity="1"/>
                             </DiffuseMaterial.Brush>
                         </DiffuseMaterial>
                     </threeD:Cone.SideMaterial>
@@ -83,10 +83,11 @@
                         </DiffuseMaterial>
                     </threeD:Cone.BottomMaterial>
                 </threeD:Cone>
-                
-                <threeD:Cylinder Height="8" TopRadius="4" BottomRadius="4" Origin="0,0,0">
+                           -->
+
+                <threeD:Cylinder Height="19.87" TopRadius="5.025025" BottomRadius="7.51208333" Origin="0,0,0">
                     <threeD:Cylinder.Transform>
-                        <TranslateTransform3D OffsetY="-5" OffsetX="5"/>
+                        <TranslateTransform3D OffsetY="-9"/>
                     </threeD:Cylinder.Transform>
                     <threeD:Cylinder.SideMaterial>
                         <MaterialGroup>
@@ -96,8 +97,8 @@
                                 </DiffuseMaterial.Brush>
                             </DiffuseMaterial>
                             <DiffuseMaterial>
-                                <DiffuseMaterial.Brush> 
-                                    <ImageBrush ImageSource="Assets/Test1.jpg" Opacity="1.000000" Viewport="0.3 0.125 0.38 0.75"/>
+                                <DiffuseMaterial.Brush>
+                                    <ImageBrush ImageSource="Assets/222.jpg" Opacity="1.000000"/>
                                 </DiffuseMaterial.Brush>
                             </DiffuseMaterial>
                         </MaterialGroup>
@@ -117,7 +118,7 @@
                         </DiffuseMaterial>
                     </threeD:Cylinder.BottomMaterial>
                 </threeD:Cylinder>
-                -->
+                    
             </Viewport3D.Children>
         </Viewport3D>
 
