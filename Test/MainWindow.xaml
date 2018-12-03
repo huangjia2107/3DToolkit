@@ -63,7 +63,6 @@
                     </threeD:Pyramid.BottomMaterial>
                 </threeD:Pyramid>
                      
-
                 <threeD:Cone Height="8" Radius="4" Origin="0,0,0">
                     <threeD:Cone.Transform>
                         <TranslateTransform3D OffsetY="-5"/>
@@ -83,7 +82,6 @@
                         </DiffuseMaterial>
                     </threeD:Cone.BottomMaterial>
                 </threeD:Cone>
-                           -->
 
                 <threeD:Cylinder Height="19.87" TopRadius="5.025025" BottomRadius="7.51208333" Origin="0,0,0">
                     <threeD:Cylinder.Transform>
@@ -118,7 +116,35 @@
                         </DiffuseMaterial>
                     </threeD:Cylinder.BottomMaterial>
                 </threeD:Cylinder>
-                    
+                   
+                <threeD:Cube Height="5" Width="5" Length="5" Origin="0,0,0">
+                    <threeD:Cube.Transform>
+                        <TranslateTransform3D OffsetY="0"/>
+                    </threeD:Cube.Transform>
+                    <threeD:Cube.SideMaterials>
+                        <MaterialGroup>
+                            <DiffuseMaterial Brush="Red"/>
+                            <DiffuseMaterial Brush="Green"/>
+                            <DiffuseMaterial Brush="Orange"/>
+                            <DiffuseMaterial Brush="Gray"/>
+                            <DiffuseMaterial Brush="Purple"/>
+                            <DiffuseMaterial Brush="Crimson"/>
+                        </MaterialGroup>
+                    </threeD:Cube.SideMaterials> 
+                </threeD:Cube>
+                -->
+                <threeD:Sphere Radius="6" Origin="0,0,0">
+                    <threeD:Sphere.Transform>
+                        <TranslateTransform3D OffsetY="0"/>
+                    </threeD:Sphere.Transform>
+                    <threeD:Sphere.Material>
+                        <DiffuseMaterial>
+                            <DiffuseMaterial.Brush>
+                                <ImageBrush ImageSource="Assets/Earth.jpg" Opacity="1.000000" />
+                            </DiffuseMaterial.Brush>
+                        </DiffuseMaterial>
+                    </threeD:Sphere.Material>
+                </threeD:Sphere>
             </Viewport3D.Children>
         </Viewport3D>
 
