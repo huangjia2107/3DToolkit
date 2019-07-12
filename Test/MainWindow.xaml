@@ -82,31 +82,32 @@
                         </DiffuseMaterial>
                     </threeD:Cone.BottomMaterial>
                 </threeD:Cone>
-                 
-                <threeD:Cylinder Height="19.87" TopRadius="5.025025" BottomRadius="7.51208333" Origin="0,0,0">
+                 -->
+                <threeD:Cylinder Height="15" TopRadius="6" BottomRadius="6" Origin="0,0,0">
                     <threeD:Cylinder.Transform>
                         <TranslateTransform3D OffsetY="-9"/>
                     </threeD:Cylinder.Transform>
                     <threeD:Cylinder.SideMaterial>
                         <MaterialGroup>
+                            <DiffuseMaterial Brush="LightGray"/>
                             <DiffuseMaterial>
                                 <DiffuseMaterial.Brush>
-                                    <ImageBrush ImageSource="Assets/Test.jpg" Opacity="1.000000" TileMode="Tile"/>
+                                    <ImageBrush ImageSource="Assets/cup.jpg" Opacity="1.000000" TileMode="None"  Viewport="0.35,0.25,0.3,0.5"/>
                                 </DiffuseMaterial.Brush>
                             </DiffuseMaterial>
+                             
+                            <!--
                             <DiffuseMaterial>
                                 <DiffuseMaterial.Brush>
                                     <ImageBrush ImageSource="Assets/222.jpg" Opacity="1.000000" TileMode="Tile"/>
                                 </DiffuseMaterial.Brush>
                             </DiffuseMaterial>
+                            -->
                         </MaterialGroup>
                     </threeD:Cylinder.SideMaterial>
+                    
                     <threeD:Cylinder.TopMaterial>
-                        <DiffuseMaterial>
-                            <DiffuseMaterial.Brush>
-                                <ImageBrush ImageSource="Assets/Koala.jpg" Opacity="1.000000" />
-                            </DiffuseMaterial.Brush>
-                        </DiffuseMaterial>
+                        <DiffuseMaterial Brush="Gray"/>
                     </threeD:Cylinder.TopMaterial>
                     <threeD:Cylinder.BottomMaterial>
                         <DiffuseMaterial>
@@ -115,8 +116,9 @@
                             </DiffuseMaterial.Brush>
                         </DiffuseMaterial>
                     </threeD:Cylinder.BottomMaterial>
+                    
                 </threeD:Cylinder>
-                 
+                 <!--
                 <threeD:Cube Height="5" Width="5" Length="5" Origin="0,0,0">
                     <threeD:Cube.Transform>
                         <TranslateTransform3D OffsetY="0"/>
@@ -132,7 +134,7 @@
                         </MaterialGroup>
                     </threeD:Cube.SideMaterials> 
                 </threeD:Cube>
-               -->
+               
                 <threeD:Sphere Radius="6" Origin="0,0,0">
                     <threeD:Sphere.Transform>
                         <TranslateTransform3D OffsetY="0"/>
@@ -145,7 +147,7 @@
                         </DiffuseMaterial>
                     </threeD:Sphere.Material>
                 </threeD:Sphere>
-               
+               -->
             </Viewport3D.Children>
         </Viewport3D>
 

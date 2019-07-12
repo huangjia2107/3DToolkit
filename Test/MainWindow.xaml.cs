@@ -27,8 +27,8 @@ namespace Test
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var x = 30 * Math.Cos(2 * Math.PI * HorSlider.Value / 360);
-            var z = 30 * Math.Sin(2 * Math.PI * HorSlider.Value / 360);
+            var x = 40 * Math.Sin(2 * Math.PI * HorSlider.Value / 360);
+            var z = 40 * Math.Cos(2 * Math.PI * HorSlider.Value / 360);
 
             camera.LookDirection = new Vector3D(-x, camera.LookDirection.Y, -z);
             camera.Position = new Point3D(x, camera.Position.Y, z);
