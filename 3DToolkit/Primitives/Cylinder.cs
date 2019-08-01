@@ -135,6 +135,11 @@ namespace ThreeDToolkit.Primitives
                 ConstructModel3DGroup();
             else
             {
+                if (DoubleUtil.LessThanOrClose(TopRadius, 0) || DoubleUtil.LessThanOrClose(BottomRadius, 0) || DoubleUtil.LessThanOrClose(Height, 0))
+                    this.Content = null;
+                else
+                    this.Content = _modelGroup;
+                    
                 var sideMesh = GenerateSideMesh();
 
                 _sideGeometryModel3D.Geometry = sideMesh;
