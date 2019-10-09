@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Media3D;
+using ThreeDToolkit.Models;
 
 namespace Test
 {
@@ -38,6 +39,17 @@ namespace Test
         {
             camera.LookDirection = new Vector3D(camera.LookDirection.X, -VerSlider.Value, camera.LookDirection.Z);
             camera.Position = new Point3D(camera.Position.X, VerSlider.Value, camera.Position.Z);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var topPerimeter = 2 * Math.PI * TestCylinder.TopRadius;
+            var bottomPerimeter = 2 * Math.PI * TestCylinder.BottomRadius;
+
+            var pointList = TestHelper.GenerateCylinderSideMesh(TestCylinder.TopRadius, TestCylinder.BottomRadius,
+                new IsoscelesTrapezoid { TopWidth = topPerimeter, BottomWidth = bottomPerimeter, Height = TestCylinder.Height }, 200, true);
+
+            (new TestWindow(pointList, TestImageBrush.ImageSource)).Show();
         }
     }
 }

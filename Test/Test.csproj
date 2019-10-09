@@ -44,6 +44,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="TestHelper.cs" />
+    <Compile Include="TestWindow.xaml.cs">
+      <DependentUpon>TestWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -56,6 +60,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="TestWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -100,19 +108,28 @@
     <Resource Include="Assets\111.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\Check.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\222.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\333.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Assets\Earth.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\cup.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\222222.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\222333.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\33333.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\4444444.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\5555555.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\sssss.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

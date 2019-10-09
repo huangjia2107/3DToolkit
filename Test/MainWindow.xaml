@@ -6,15 +6,15 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="10"/>
+            <RowDefinition Height="5"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="10"/>
+            <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
         <Viewport3D>
             <Viewport3D.Camera>
@@ -83,42 +83,36 @@
                     </threeD:Cone.BottomMaterial>
                 </threeD:Cone>
                  -->
-                <threeD:Cylinder Height="15" TopRadius="6" BottomRadius="6" Origin="0,0,0">
+                <threeD:Cylinder x:Name="TestCylinder" Height="15" TopRadius="5" BottomRadius="2.5" Origin="0,0,0" >
                     <threeD:Cylinder.Transform>
                         <TranslateTransform3D OffsetY="-9"/>
                     </threeD:Cylinder.Transform>
                     <threeD:Cylinder.SideMaterial>
                         <MaterialGroup>
-                            <DiffuseMaterial Brush="LightGray"/>
+                            <DiffuseMaterial Brush="White"/>
+                            
                             <DiffuseMaterial>
                                 <DiffuseMaterial.Brush>
-                                    <ImageBrush ImageSource="Assets/cup.jpg" Opacity="1.000000" TileMode="None"  Viewport="0.35,0.25,0.3,0.5"/>
+                                    <ImageBrush x:Name="TestImageBrush" ImageSource="Assets/sssss.png"  ViewportUnits="Absolute" Viewport="0.17,0.27746,0.6597,0.4793624"/>
                                 </DiffuseMaterial.Brush>
                             </DiffuseMaterial>
-                             
+                            
                             <!--
                             <DiffuseMaterial>
                                 <DiffuseMaterial.Brush>
-                                    <ImageBrush ImageSource="Assets/222.jpg" Opacity="1.000000" TileMode="Tile"/>
+                                    <VisualBrush Viewport="0.17,0.27746,0.6597,0.4793624">
+                                        <VisualBrush.Visual>
+                                            <Image x:Name="PreviewImage" Source="Assets/sssss.png"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
                                 </DiffuseMaterial.Brush>
                             </DiffuseMaterial>
                             -->
                         </MaterialGroup>
-                    </threeD:Cylinder.SideMaterial>
-                    
-                    <threeD:Cylinder.TopMaterial>
-                        <DiffuseMaterial Brush="Gray"/>
-                    </threeD:Cylinder.TopMaterial>
-                    <threeD:Cylinder.BottomMaterial>
-                        <DiffuseMaterial>
-                            <DiffuseMaterial.Brush>
-                                <ImageBrush ImageSource="Assets/Test1.jpg" Opacity="1.000000" />
-                            </DiffuseMaterial.Brush>
-                        </DiffuseMaterial>
-                    </threeD:Cylinder.BottomMaterial>
-                    
+                    </threeD:Cylinder.SideMaterial> 
+
                 </threeD:Cylinder>
-                 <!--
+                <!--
                 <threeD:Cube Height="5" Width="5" Length="5" Origin="0,0,0">
                     <threeD:Cube.Transform>
                         <TranslateTransform3D OffsetY="0"/>
@@ -157,5 +151,7 @@
         <Slider x:Name="VerSlider" Grid.Column="2" Margin="10,0" Orientation="Vertical"
                 Maximum="20" Minimum="-20" Value="20"
                 ValueChanged="Slider_ValueChanged_1"/>
+
+        <Button Grid.Row="2" Grid.Column="2" Content="Point" Height="30" Width="50" Click="Button_Click" /> 
     </Grid>
 </Window>

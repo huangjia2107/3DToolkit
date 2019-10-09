@@ -87,6 +87,19 @@ namespace ThreeDToolkit.Primitives
             return !(double.IsNaN(d) || double.IsInfinity(d));
         }
 
+        public static readonly DependencyProperty SideMaterialViewportProperty =
+            DependencyProperty.Register("SideMaterialViewport", typeof(Rect), typeof(Cylinder), new PropertyMetadata(new Rect(0, 0, 1, 1), OnSideMaterialViewportPropertyChanged));
+        public Rect SideMaterialViewport
+        {
+            get { return (Rect)GetValue(SideMaterialViewportProperty); }
+            set { SetValue(SideMaterialViewportProperty, value); }
+        }
+        static void OnSideMaterialViewportPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var ctrl = d as Cylinder;
+            ctrl.UpdateGeometry();
+        }
+
         public static readonly DependencyProperty SideMaterialProperty =
             DependencyProperty.Register("SideMaterial", typeof(Material), typeof(Cylinder), new PropertyMetadata(new DiffuseMaterial(Brushes.LightGray), OnSideMaterialPropertyChanged));
         public Material SideMaterial
@@ -139,7 +152,7 @@ namespace ThreeDToolkit.Primitives
                     this.Content = null;
                 else
                     this.Content = _modelGroup;
-                    
+
                 var sideMesh = GenerateSideMesh();
 
                 _sideGeometryModel3D.Geometry = sideMesh;
@@ -198,7 +211,7 @@ namespace ThreeDToolkit.Primitives
             var topPerimeter = 2 * Math.PI * TopRadius;
             var bottomPerimeter = 2 * Math.PI * BottomRadius;
 
-            return CylinderUtil.GenerateCylinderSideMesh(Origin, TopRadius, BottomRadius,
+            return CylinderUtil.GenerateCylinderSideMesh(Origin, TopRadius, BottomRadius, SideMaterialViewport,
                 new IsoscelesTrapezoid { TopWidth = topPerimeter, BottomWidth = bottomPerimeter, Height = Height }, Stacks, IsSharePoint);
         }
 

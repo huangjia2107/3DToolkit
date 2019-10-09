@@ -10,10 +10,10 @@ namespace ThreeDToolkit.Helps
 {
     public static class CylinderUtil
     {
-        #region Public 
+        #region Public
 
         //Relative Start Point3D : 0,0,Z --> 0,Y,Z     
-        public static MeshGeometry3D GenerateCylinderSideMesh(Point3D origin, double topRadius, double bottomRadius, IsoscelesTrapezoid trapezoid, int stacks = 20, bool isSharePoint = true)
+        public static MeshGeometry3D GenerateCylinderSideMesh(Point3D origin, double topRadius, double bottomRadius, Rect viewport, IsoscelesTrapezoid trapezoid, int stacks = 20, bool isSharePoint = true)
         {
             var mesh = new MeshGeometry3D();
 
@@ -49,7 +49,7 @@ namespace ThreeDToolkit.Helps
                 mesh.Positions.Add(bp);
                 mesh.Positions.Add(tp);
 
-                InsertTexturePoint(mesh, i, stacks, topRadius, bottomRadius, topSectorRadius, bottomSectorRadius, sectorRadian, sectorSize,
+                InsertTexturePoint(mesh, i, stacks, topRadius, bottomRadius, viewport, topSectorRadius, bottomSectorRadius, sectorRadian, sectorSize,
                            topSectorArcPosFunc, bottomSectorArcPosFunc);
 
                 if (i < stacks)
@@ -75,7 +75,7 @@ namespace ThreeDToolkit.Helps
                         mesh.Positions.Add(bp_next);
                         mesh.Positions.Add(tp_next);
 
-                        InsertTexturePoint(mesh, i + 1, stacks, topRadius, bottomRadius, topSectorRadius, bottomSectorRadius, sectorRadian, sectorSize,
+                        InsertTexturePoint(mesh, i + 1, stacks, topRadius, bottomRadius, viewport, topSectorRadius, bottomSectorRadius, sectorRadian, sectorSize,
                             topSectorArcPosFunc, bottomSectorArcPosFunc);
 
                         if (i == stacks - 1)
@@ -136,16 +136,52 @@ namespace ThreeDToolkit.Helps
             return new Point3D(radius * (-Math.Sin(rad)) + origin.X, y + origin.Y, radius * (-Math.Cos(rad)) + origin.Z);
         }
 
-        #endregion    
+        public static Size GetSectorSize(double topRadius, double bottomRadius, double height)
+        {
+            if (DoubleUtil.AreClose(topRadius, bottomRadius))
+                return new Size(2 * Math.PI * topRadius, height);
 
-        private static void InsertTexturePoint(MeshGeometry3D mesh, int index, int stacks, double topRadius, double bottomRadius,
+            var k = Math.Sqrt(Math.Pow(height, 2) + Math.Pow(topRadius - bottomRadius, 2));
+
+            var topSectorRadius = topRadius * k / Math.Abs(topRadius - bottomRadius);
+            var bottomSectorRadius = bottomRadius * k / Math.Abs(topRadius - bottomRadius);
+
+            var sectorRadian = 2 * Math.PI * topRadius / topSectorRadius;
+
+            var h = 0d;
+            var w = 0d;
+
+            if (DoubleUtil.LessThan(topSectorRadius, bottomSectorRadius))
+            {
+                h = bottomSectorRadius - topSectorRadius * Math.Cos(sectorRadian / 2);
+                w = 2 * bottomSectorRadius * Math.Sin(sectorRadian / 2);
+            }
+            else 
+            {
+                h = topSectorRadius - bottomSectorRadius * Math.Cos(sectorRadian / 2);
+                w = 2 * topSectorRadius * Math.Sin(sectorRadian / 2);
+            }
+
+            return new Size(w, h);
+        }
+
+        #endregion
+
+        private static void InsertTexturePoint(MeshGeometry3D mesh, int index, int stacks, double topRadius, double bottomRadius, Rect viewport,
                    double topSectorRadius, double bottomSectorRadius, double sectorRadian, Size sectorSize,
                    Func<int, int, Point> topSectorArcPosFunc, Func<int, int, Point> bottomSectorArcPosFunc)
         {
             if (DoubleUtil.AreClose(topRadius, bottomRadius))
             {
-                mesh.TextureCoordinates.Add(new Point((double)index / stacks, 1));
-                mesh.TextureCoordinates.Add(new Point((double)index / stacks, 0));
+                var xPos = (double)index / stacks;
+
+                //map texture by viewport
+                mesh.TextureCoordinates.Add(new Point((xPos - viewport.X) / viewport.Width, (1 - viewport.Y) / viewport.Height));
+                mesh.TextureCoordinates.Add(new Point((xPos - viewport.X) / viewport.Width, (0 - viewport.Y) / viewport.Height));
+
+                //map entire texture, same as viewport = "0,0,1,1"
+                //mesh.TextureCoordinates.Add(new Point(xPos, 1));
+                //mesh.TextureCoordinates.Add(new Point(xPos, 0));
             }
             else
             {
@@ -158,8 +194,13 @@ namespace ThreeDToolkit.Helps
                     smallArcTexturePoint = CalculateSmallArcTexturePoint(toPoint, topSectorRadius, bottomSectorRadius, sectorRadian);
                     largeArcTexturePoint = CalculateLargeArcTexturePoint(bottomPoint, topSectorRadius, bottomSectorRadius, sectorRadian);
 
-                    mesh.TextureCoordinates.Add(new Point(largeArcTexturePoint.X / sectorSize.Width, largeArcTexturePoint.Y / sectorSize.Height));
-                    mesh.TextureCoordinates.Add(new Point(smallArcTexturePoint.X / sectorSize.Width, smallArcTexturePoint.Y / sectorSize.Height));
+                    //map texture by viewport
+                    mesh.TextureCoordinates.Add(new Point((largeArcTexturePoint.X / sectorSize.Width - viewport.X) / viewport.Width, (largeArcTexturePoint.Y / sectorSize.Height - viewport.Y) / viewport.Height));
+                    mesh.TextureCoordinates.Add(new Point((smallArcTexturePoint.X / sectorSize.Width - viewport.X) / viewport.Width, (smallArcTexturePoint.Y / sectorSize.Height - viewport.Y) / viewport.Height));
+
+                    //map entire texture, same as viewport = "0,0,1,1"
+                    //mesh.TextureCoordinates.Add(new Point(largeArcTexturePoint.X / sectorSize.Width, largeArcTexturePoint.Y / sectorSize.Height));
+                    //mesh.TextureCoordinates.Add(new Point(smallArcTexturePoint.X / sectorSize.Width, smallArcTexturePoint.Y / sectorSize.Height));
                 }
                 else
                 {
@@ -169,8 +210,13 @@ namespace ThreeDToolkit.Helps
                     smallArcTexturePoint = new Point(smallArcTexturePoint.X, sectorSize.Height - smallArcTexturePoint.Y);
                     largeArcTexturePoint = new Point(largeArcTexturePoint.X, sectorSize.Height - largeArcTexturePoint.Y);
 
-                    mesh.TextureCoordinates.Add(new Point(smallArcTexturePoint.X / sectorSize.Width, smallArcTexturePoint.Y / sectorSize.Height));
-                    mesh.TextureCoordinates.Add(new Point(largeArcTexturePoint.X / sectorSize.Width, largeArcTexturePoint.Y / sectorSize.Height));
+                    //map texture by viewport
+                    mesh.TextureCoordinates.Add(new Point((smallArcTexturePoint.X / sectorSize.Width - viewport.X) / viewport.Width, (smallArcTexturePoint.Y / sectorSize.Height - viewport.Y) / viewport.Height));
+                    mesh.TextureCoordinates.Add(new Point((largeArcTexturePoint.X / sectorSize.Width - viewport.X) / viewport.Width, (largeArcTexturePoint.Y / sectorSize.Height - viewport.Y) / viewport.Height));
+
+                    //map entire texture, same as viewport = "0,0,1,1"
+                    //mesh.TextureCoordinates.Add(new Point(smallArcTexturePoint.X / sectorSize.Width, smallArcTexturePoint.Y / sectorSize.Height));
+                    //mesh.TextureCoordinates.Add(new Point(largeArcTexturePoint.X / sectorSize.Width, largeArcTexturePoint.Y / sectorSize.Height));
                 }
             }
         }
