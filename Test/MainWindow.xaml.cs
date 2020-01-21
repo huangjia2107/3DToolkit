@@ -43,6 +43,7 @@ namespace Test
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            /*
             var topPerimeter = 2 * Math.PI * TestCylinder.TopRadius;
             var bottomPerimeter = 2 * Math.PI * TestCylinder.BottomRadius;
 
@@ -50,6 +51,7 @@ namespace Test
                 new IsoscelesTrapezoid { TopWidth = topPerimeter, BottomWidth = bottomPerimeter, Height = TestCylinder.Height }, 200, true);
 
             (new TestWindow(pointList, TestImageBrush.ImageSource)).Show();
+             * */
         }
     }
 }

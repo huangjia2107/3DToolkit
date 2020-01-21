@@ -83,6 +83,24 @@
                     </threeD:Cone.BottomMaterial>
                 </threeD:Cone>
                  -->
+                <threeD:Location Radius="5" Height="5">
+                    <threeD:Location.Transform>
+                        <TranslateTransform3D OffsetY="0"/>
+                    </threeD:Location.Transform>
+                    <threeD:Location.InnerSideMaterial>
+                        <DiffuseMaterial Brush="Bisque"/>
+                    </threeD:Location.InnerSideMaterial>
+                    <threeD:Location.OutterSideMaterial>
+                        <DiffuseMaterial Brush="DarkOliveGreen"/>
+                    </threeD:Location.OutterSideMaterial>
+                    <threeD:Location.TopMaterial>
+                        <DiffuseMaterial Brush="DarkViolet"/>
+                    </threeD:Location.TopMaterial>
+                    <threeD:Location.BottomMaterial>
+                        <DiffuseMaterial Brush="Lavender"/>
+                    </threeD:Location.BottomMaterial>
+                </threeD:Location>
+                <!--
                 <threeD:Cylinder x:Name="TestCylinder" Height="15" TopRadius="5" BottomRadius="2.5" Origin="0,0,0" >
                     <threeD:Cylinder.Transform>
                         <TranslateTransform3D OffsetY="-9"/>
@@ -93,25 +111,15 @@
                             
                             <DiffuseMaterial>
                                 <DiffuseMaterial.Brush>
-                                    <ImageBrush x:Name="TestImageBrush" ImageSource="Assets/sssss.png"  ViewportUnits="Absolute" Viewport="0.17,0.27746,0.6597,0.4793624"/>
+                                    <ImageBrush x:Name="TestImageBrush" ImageSource="Assets/sssss.png"  
+                                                Viewport="0.18259,0.27746,0.6348,0.5257"/>
                                 </DiffuseMaterial.Brush>
-                            </DiffuseMaterial>
-                            
-                            <!--
-                            <DiffuseMaterial>
-                                <DiffuseMaterial.Brush>
-                                    <VisualBrush Viewport="0.17,0.27746,0.6597,0.4793624">
-                                        <VisualBrush.Visual>
-                                            <Image x:Name="PreviewImage" Source="Assets/sssss.png"/>
-                                        </VisualBrush.Visual>
-                                    </VisualBrush>
-                                </DiffuseMaterial.Brush>
-                            </DiffuseMaterial>
-                            -->
+                            </DiffuseMaterial> 
                         </MaterialGroup>
                     </threeD:Cylinder.SideMaterial> 
 
                 </threeD:Cylinder>
+                -->
                 <!--
                 <threeD:Cube Height="5" Width="5" Length="5" Origin="0,0,0">
                     <threeD:Cube.Transform>
