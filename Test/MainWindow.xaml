@@ -94,7 +94,7 @@
                         <DiffuseMaterial Brush="DarkOliveGreen"/>
                     </threeD:Location.OutterSideMaterial>
                     <threeD:Location.TopMaterial>
-                        <DiffuseMaterial Brush="DarkViolet"/>
+                        <DiffuseMaterial Brush="DarkGreen"/>
                     </threeD:Location.TopMaterial>
                     <threeD:Location.BottomMaterial>
                         <DiffuseMaterial Brush="Lavender"/>
